@@ -1,18 +1,17 @@
-const { WebSocketServer } = require("ws");
+import { Server } from "socket.io";
 
-const server = new WebSocketServer({ port: 3001 });
+const io = new Server({
+  cors: {
+    origin: "http://localhost:4000",
+  },
+});
 
-console.log("server established");
+io.listen(3001);
 
-server.on("connection", (socket) => {
-  console.log("connected");
-  socket.on("message", (data) => {
-    const packet = JSON.parse(data);
-    console.log(packet);
-    socket.send(
-      JSON.stringify({
-        data: packet.data + "!!",
-      })
-    );
+io.on("connection", (socket) => {
+  // receive a message from the client
+  socket.on("hello from client", (...args) => {
+    console.log(args);
+    socket.emit("hello from server", ...args);
   });
 });
